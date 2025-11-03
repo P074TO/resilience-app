@@ -1,11 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { getDatabase } from "../database";
-import type { Habit } from "../models/Habit";
+import type { Habit, HabitType } from "../models/Habit";
 
 export async function createHabit(data: Omit<Habit, 'id' | 'createdAt' | 'updatedAt' | 'archived' | 'synced'>): Promise<string> {
     const db = await getDatabase();
-    const id: string = uuidv4();
-    const now: number = Date.now();
+    const id = uuidv4();
+    const now = Date.now();
 
     await db.runAsync(
         `INSERT INTO habits (
@@ -33,6 +33,16 @@ export async function createHabit(data: Omit<Habit, 'id' | 'createdAt' | 'update
 
 export async function getHabits(): Promise<Habit[]> {
     const db = await getDatabase();
-    const result = await db.getAllAsync<Habit>(`SELECT * FROM habits`);
-    return result ?? [];
+    const result = await db.getAllAsync<Habit>(`SELECT * FROM habits WHERE archived = 0`);
+
+    return result.map((row: any): Habit => ({
+        id: row.id,
+        userId: row.user_id,
+        name: row.name,
+        type: row.type as HabitType,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at,
+        archived: row.archived,
+        synced: row.synced,
+    }));
 }
