@@ -20,8 +20,8 @@ export async function createTables(db: SQLite.SQLiteDatabase) {
             id TEXT PRIMARY KEY,
             habit_id TEXT NOT NULL,
             timestamp INTEGER NOT NULL,
-            emotion_tags TEXT NOT NULL, -- JSON array
-            trigger_tags TEXT NOT NULL,
+            emotion_tags TEXT, -- JSON array
+            trigger_tags TEXT, -- JSON array
             note TEXT,
             synced INTEGER DEFAULT 0,
             FOREIGN KEY(habit_id) REFERENCES habits(id) ON DELETE CASCADE
@@ -31,8 +31,8 @@ export async function createTables(db: SQLite.SQLiteDatabase) {
             id TEXT PRIMARY KEY,
             content TEXT NOT NULL,
             sentiment_score REAL,
-            emotion_tags TEXT NOT NULL, -- auto-detected emotions
-            keywords TEXT NOT NULL, -- extracted keywords
+            emotion_tags TEXT, -- auto-detected emotions
+            keywords TEXT, -- extracted keywords
             created_at INTEGER NOT NULL,
             synced INTEGER DEFAULT 0
         );
@@ -51,6 +51,7 @@ export async function createTables(db: SQLite.SQLiteDatabase) {
         CREATE INDEX IF NOT EXISTS idx_habit_logs_habit_id ON habit_logs(habit_id);
         CREATE INDEX IF NOT EXISTS idx_journal_entries_created_at ON journal_entries(created_at);
         CREATE INDEX IF NOT EXISTS idx_resilience_metrics_date ON resilience_metrics(date);
+        CREATE INDEX IF NOT EXISTS idx_habit_logs_timestamp ON habit_logs(timestamp);
 
     `);
 }
