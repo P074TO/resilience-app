@@ -5,8 +5,8 @@ export interface Habit {
     type: 'build' | 'quit';
     createdAt: number;
     updatedAt: number;
-    archived: boolean;
-    synced: boolean;
+    archived: number;
+    synced: number;
 }
 
 export type HabitType = 'build' | 'quit';
