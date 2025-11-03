@@ -24,7 +24,7 @@ export async function createTables(db: SQLite.SQLiteDatabase) {
             trigger_tags TEXT NOT NULL,
             note TEXT,
             synced INTEGER DEFAULT 0,
-            FOREIGN KEY(habit_id) REFERENCES habits(id)
+            FOREIGN KEY(habit_id) REFERENCES habits(id) ON DELETE CASCADE
         );
 
         CREATE TABLE IF NOT EXISTS journal_entries (
