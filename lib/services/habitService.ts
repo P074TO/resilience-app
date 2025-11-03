@@ -33,9 +33,27 @@ export async function createHabit(
   return id;
 }
 
-export async function getHabits(): Promise<Habit[]> {
+export async function readHabits(): Promise<Habit[]> {
   const db = await getDatabase();
-  const result = await db.getAllAsync<HabitRow>(`SELECT * FROM habits WHERE archived = 0`);
+  const result = await db.getAllAsync<HabitRow>(`SELECT * FROM habits`);
+
+  return result.map(
+    (row: HabitRow): Habit => ({
+      id: row.id,
+      userId: row.user_id,
+      name: row.name,
+      type: row.type as HabitType,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      archived: row.archived,
+      synced: row.synced,
+    })
+  );
+}
+
+export async function readArchivedHabits(): Promise<Habit[]> {
+  const db = await getDatabase();
+  const result = await db.getAllAsync<HabitRow>(`SELECT * FROM habits WHERE archived = 1`);
 
   return result.map(
     (row: HabitRow): Habit => ({
@@ -83,6 +101,11 @@ export async function updateHabit(id: string, data: Partial<Habit>): Promise<voi
 export async function archiveHabit(id: string): Promise<void> {
   const db = await getDatabase();
   await db.runAsync(`UPDATE habits SET archived = 1, updated_at = ? WHERE id = ?`, Date.now(), id);
+}
+
+export async function unarchiveHabit(id: string): Promise<void> {
+  const db = await getDatabase();
+  await db.runAsync(`UPDATE habits SET archived = 0, updated_at = ? WHERE id = ?`, Date.now(), id);
 }
 
 export async function deleteHabit(id: string): Promise<void> {
