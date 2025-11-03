@@ -1,10 +1,10 @@
-import { v4 as uuidv4 } from 'uuid';
+import * as Crypto from 'expo-crypto';
 import { getDatabase } from "../database";
 import type { Habit, HabitRow, HabitType } from "../models/Habit";
 
 export async function createHabit(data: Omit<Habit, 'id' | 'createdAt' | 'updatedAt' | 'archived' | 'synced'>): Promise<string> {
     const db = await getDatabase();
-    const id = uuidv4();
+    const id = Crypto.randomUUID();
     const now = Date.now();
 
     await db.runAsync(
