@@ -1,23 +1,16 @@
 import { v4 as uuidv4 } from 'uuid';
 import { getDatabase } from "../database";
-import type { Habit, HabitType } from "../models/Habit";
+import type { Habit } from "../models/Habit";
 
-export async function createHabit(data: Omit<Habit, 'id'>): Promise<string> {
+export async function createHabit(data: Omit<Habit, 'id' | 'createdAt' | 'updatedAt' | 'archived' | 'synced'>): Promise<string> {
     const db = await getDatabase();
-    const id = uuidv4();
-    const now = Date.now();
-    const habit = {
-        id,
-        name: data.name as string,
-        type: data.type as HabitType,
-        createdAt: now,
-        updatedAt: now,
-        archived: false,
-        synced: false,
-    };
+    const id: string = uuidv4();
+    const now: number = Date.now();
+
     await db.runAsync(
         `INSERT INTO habits (
             id, 
+            user_id,
             name, 
             type, 
             created_at, 
@@ -25,18 +18,17 @@ export async function createHabit(data: Omit<Habit, 'id'>): Promise<string> {
             archived, 
             synced
         ) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [
-            habit.id,
-            habit.name,
-            habit.type,
-            habit.createdAt,
-            habit.updatedAt,
-            habit.archived,
-            habit.synced
-        ]
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        id, 
+        data.userId ?? null, 
+        data.name, 
+        data.type, 
+        now, 
+        now, 
+        0, 
+        0
     );
-    return habit.id;
+    return id;
 }
 
 export async function getHabits(): Promise<Habit[]> {
