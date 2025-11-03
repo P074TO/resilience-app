@@ -9,7 +9,7 @@ export default function Index() {
 
   useEffect(() => {
     fetchHabits();
-  }, [])
+  }, []);
 
   async function fetchHabits() {
     try {
@@ -37,9 +37,11 @@ export default function Index() {
   }
 
   if (loading) {
-    return <View style={styles.container}>
-      <Text>Loading</Text>
-    </View>
+    return (
+      <View style={styles.container}>
+        <Text>Loading</Text>
+      </View>
+    );
   }
 
   return (
@@ -87,5 +89,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     textTransform: "uppercase",
-  }
+  },
 });
